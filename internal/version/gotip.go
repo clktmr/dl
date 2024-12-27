@@ -15,6 +15,36 @@ import (
 	"strconv"
 )
 
+// RunTag runs a tagged version of the "go" tool from the development tree.
+func RunTag(tag string) {
+	log.SetFlags(0)
+
+	root, err := goroot(tag)
+	if err != nil {
+		log.Fatalf("%s: %v", tag, err)
+	}
+
+	if len(os.Args) > 1 && os.Args[1] == "download" {
+		switch len(os.Args) {
+		case 2:
+			if err := installTip(root, tag); err != nil {
+				log.Fatalf("%s: %v", tag, err)
+			}
+		default:
+			log.Fatalf("%s: usage: %s download", tag, tag)
+		}
+		log.Printf("Success. You may now run '%s'!", tag)
+		os.Exit(0)
+	}
+
+	gobin := filepath.Join(root, "bin", "go"+exe())
+	if _, err := os.Stat(gobin); err != nil {
+		log.Fatalf("%s: not downloaded. Run '%s download' to install to %v", tag, tag, root)
+	}
+
+	runGo(root)
+}
+
 // RunTip runs the "go" tool from the development tree.
 func RunTip() {
 	log.SetFlags(0)
@@ -70,7 +100,7 @@ func installTip(root, target string) error {
 		if err := os.MkdirAll(root, 0755); err != nil {
 			return fmt.Errorf("failed to create repository: %v", err)
 		}
-		if err := git("clone", "--origin=origin", "--depth=1", "https://www.github.com/embeddedgo/go.git", root); err != nil {
+		if err := git("clone", "--origin=origin", "--depth=1", "https://www.github.com/clktmr/go.git", root); err != nil { // TODO set branch to master-embedded?
 			return fmt.Errorf("failed to clone git repository: %v", err)
 		}
 	}
@@ -113,9 +143,8 @@ func installTip(root, target string) error {
 		}
 	} else if target != "" {
 		log.Printf("Fetching branch %v...", target)
-		ref := "refs/heads/" + target
-		if err := git("fetch", "origin", ref); err != nil {
-			return fmt.Errorf("failed to fetch %s: %v", ref, err)
+		if err := git("fetch", "origin", target); err != nil {
+			return fmt.Errorf("failed to fetch %s: %v", target, err)
 		}
 	} else {
 		log.Printf("Updating the go development tree...")
