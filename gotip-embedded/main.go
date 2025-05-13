@@ -6,7 +6,7 @@
 //
 // To install, run:
 //
-//	$ go install github.com/embeddedgo/dl/gotip-embedded@latest
+//	$ go install github.com/clktmr/dl/gotip-embedded@latest
 //	$ gotip-embedded download
 //
 // And then use the gotip-embedded command as if it were your normal go command.
@@ -15,7 +15,7 @@
 // To download an alternative branch, run "gotip-embedded download BRANCH".
 package main
 
-import "github.com/embeddedgo/dl/internal/version"
+import "github.com/clktmr/dl/internal/version"
 
 func main() {
 	version.RunTip()

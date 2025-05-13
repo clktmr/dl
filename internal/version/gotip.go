@@ -96,7 +96,7 @@ func installTip(root, target string) error {
 		if err := os.MkdirAll(root, 0755); err != nil {
 			return fmt.Errorf("failed to create repository: %v", err)
 		}
-		if err := git("clone", "--origin=origin", "--depth=1", "https://www.github.com/embeddedgo/go.git", root); err != nil {
+		if err := git("clone", "--origin=origin", "--depth=1", "https://www.github.com/clktmr/go.git", root); err != nil {
 			return fmt.Errorf("failed to clone git repository: %v", err)
 		}
 	}
